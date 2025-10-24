@@ -1,11 +1,12 @@
 import * as Location from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
-import type { EventUserLocation } from 'react-native-maps';
+import type { UserLocationChangeEvent } from 'react-native-maps';
 
 interface UseUserLocationOptions {
   requestPermission: boolean;
-  onUserLocationChange?(e: EventUserLocation): void;
+  onUserLocationChange?(e: UserLocationChangeEvent): void;
   followUserLocation: boolean;
+  showUserLocation: boolean;
 }
 
 export function useUserLocation(options: UseUserLocationOptions) {
@@ -16,7 +17,7 @@ export function useUserLocation(options: UseUserLocationOptions) {
 
   const [permission] = Location.useForegroundPermissions({
     request: options.requestPermission,
-    get: true,
+    get: options.showUserLocation,
   });
 
   const handleLocationChange = useCallback(
@@ -34,7 +35,7 @@ export function useUserLocation(options: UseUserLocationOptions) {
             speed: e.coords.speed || 0,
           },
         },
-      } as unknown as EventUserLocation);
+      } as unknown as UserLocationChangeEvent);
     },
     [options.onUserLocationChange]
   );

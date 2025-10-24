@@ -1,6 +1,6 @@
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import type { ForwardedRef } from 'react';
 import React, {
-  ForwardedRef,
   forwardRef,
   memo,
   useCallback,
@@ -37,6 +37,7 @@ function _MapView(props: MapViewProps, ref: ForwardedRef<Partial<RNMapView>>) {
   const [isGesture, setIsGesture] = useState<boolean>(false);
 
   const userLocation = useUserLocation({
+    showUserLocation: props.showsUserLocation || false,
     requestPermission:
       props.showsUserLocation || !!props.onUserLocationChange || false,
     onUserLocationChange: props.onUserLocationChange,
@@ -235,7 +236,6 @@ function _MapView(props: MapViewProps, ref: ForwardedRef<Partial<RNMapView>>) {
               subAdministrativeArea: address.subregion || '',
               subLocality: address.city || '',
               thoroughfare: '',
-              subThoroughfare: '',
             }
           : (null as unknown as Address);
       },
@@ -344,6 +344,7 @@ function _MapView(props: MapViewProps, ref: ForwardedRef<Partial<RNMapView>>) {
         {props.showsUserLocation && userLocation && (
           <UserLocationMarker coordinates={userLocation.coords} />
         )}
+        {props.children}
       </GoogleMap>
     ),
     [
@@ -377,7 +378,7 @@ function _MapView(props: MapViewProps, ref: ForwardedRef<Partial<RNMapView>>) {
   }
 
   return isLoaded ? (
-    React.cloneElement(mapNode, { children: props.children })
+    React.cloneElement(mapNode)
   ) : (
     <>{props.loadingFallback || null}</>
   );
